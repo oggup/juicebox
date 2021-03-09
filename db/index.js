@@ -341,10 +341,11 @@ async function getUserByUsername(username) {
       `
       SELECT *
       FROM users
-      WHERE username=$1; 
+      WHERE username=$1;
     `,
       [username]
     );
+
     return user;
   } catch (error) {
     throw error;
