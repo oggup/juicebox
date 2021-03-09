@@ -31,13 +31,13 @@ usersRouter.post("/login", async (req, res, next) => {
 
   try {
     const user = await getUserByUsername(username);
-    user["token"] = jwt.sign(
+    const token = jwt.sign(
       { id: user.id, username: user.username },
       JWT_SECRET
     );
 
     if (user && user.password == password) {
-      res.send({ message: "you're logged in!" });
+      res.send({ token, message: "you're logged in!" });
     } else {
       next({
         name: "IncorrectCredentialsError",
@@ -82,8 +82,9 @@ usersRouter.post("/register", async (req, res, next) => {
     );
 
     res.send({
-      message: "Thank you for registering",
       token,
+      message: "Thank you for registering"
+      
     });
   } catch ({ name, message }) {
     next({ name, message });

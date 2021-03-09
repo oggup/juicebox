@@ -1,11 +1,8 @@
 require("dotenv").config();
 
-const { PORT = 3000 } = process.env
+const { PORT = 3000 } = process.env;
 const express = require("express");
 const server = express();
-const { client } = require("./db");
-client.connect();
-
 const bodyParser = require("body-parser");
 server.use(bodyParser.json());
 
@@ -21,6 +18,9 @@ server.use((req, res, next) => {
 
   next();
 });
+
+const { client } = require("./db");
+client.connect()
 
 server.get("/background/:color", (req, res, next) => {
   res.send(`
