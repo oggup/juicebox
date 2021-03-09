@@ -1,13 +1,19 @@
-const {
+const  {
   client,
-  getAllUsers,
   createUser,
   updateUser,
-  getAllPosts,
+  getAllUsers,
+  getUserById,
   createPost,
   updatePost,
+  getAllPosts,
   getPostsByUser,
-  getUserById,
+  getPostById,
+  getPostsByTagName,
+  addTagsToPost,
+  createTags,
+  getAllTags,
+  getUserByUsername,
 } = require("./index");
 
 async function createInitialUser() {
@@ -82,7 +88,7 @@ async function dropTables() {
     console.log("Finished dropping tables!!");
   } catch (error) {
     console.error("Error dropping tables!");
-    throw error; //we pass the error up to the function that calls dropTables
+    throw error; 
   }
 }
 
@@ -118,7 +124,7 @@ async function createTables() {
     console.log("Finished creating tables!!");
   } catch (error) {
     console.error("Error build tables!");
-    throw error; //we pass the error up the function that calls createTables
+    throw error; 
   }
 }
 async function testDB() {
