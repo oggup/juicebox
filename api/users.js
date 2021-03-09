@@ -1,11 +1,9 @@
 const express = require("express");
 const usersRouter = express.Router();
 require("dotenv").config();
-const jwt = require('jsonwebtoken');
+const jwt = require("jsonwebtoken");
 const { JWT_SECRET } = process.env;
 const { getAllUsers, getUserByUsername, createUser } = require("../db");
-
-
 
 usersRouter.use((req, res, next) => {
   console.log("A request is being made to /users");
@@ -21,37 +19,38 @@ usersRouter.get("/", async (req, res) => {
   });
 });
 
-usersRouter.post('/login', async (req, res, next) => {
+usersRouter.post("/login", async (req, res, next) => {
   const { username, password } = req.body;
 
- 
   if (!username || !password) {
     next({
       name: "MissingCredentialsError",
-      message: "Please supply both a username and password"
+      message: "Please supply both a username and password",
     });
   }
 
   try {
     const user = await getUserByUsername(username);
-    user['token'] = jwt.sign({id:user.id,username:user.username},JWT_SECRET)
+    user["token"] = jwt.sign(
+      { id: user.id, username: user.username },
+      JWT_SECRET
+    );
 
     if (user && user.password == password) {
-     
       res.send({ message: "you're logged in!" });
     } else {
-      next({ 
-        name: 'IncorrectCredentialsError', 
-        message: 'Username or password is incorrect'
+      next({
+        name: "IncorrectCredentialsError",
+        message: "Username or password is incorrect",
       });
     }
-  } catch(error) {
+  } catch (error) {
     console.log(error);
     next(error);
   }
 });
 
-usersRouter.post('/register', async (req, res, next) => {
+usersRouter.post("/register", async (req, res, next) => {
   const { username, password, name, location } = req.body;
 
   try {
@@ -59,8 +58,8 @@ usersRouter.post('/register', async (req, res, next) => {
 
     if (_user) {
       next({
-        name: 'UserExistsError',
-        message: 'A user by that username already exists'
+        name: "UserExistsError",
+        message: "A user by that username already exists",
       });
     }
 
@@ -71,21 +70,24 @@ usersRouter.post('/register', async (req, res, next) => {
       location,
     });
 
-    const token = jwt.sign({ 
-      id: user.id, 
-      username
-    }, process.env.JWT_SECRET, {
-      expiresIn: '1w'
-    });
+    const token = jwt.sign(
+      {
+        id: user.id,
+        username,
+      },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: "1w",
+      }
+    );
 
-    res.send({ 
+    res.send({
       message: "Thank you for registering",
-      token 
+      token,
     });
   } catch ({ name, message }) {
-    next({ name, message })
-  } 
+    next({ name, message });
+  }
 });
-
 
 module.exports = usersRouter;
