@@ -1,8 +1,11 @@
 const express = require("express");
 const usersRouter = express.Router();
-const { getAllUsers } = require("../db");
-const {getUserByUsername, createUser} =require("../db")
-JWT_SECRET =require('./env')
+require("dotenv").config();
+const jwt = require('jsonwebtoken');
+const { JWT_SECRET } = process.env;
+const { getAllUsers, getUserByUsername, createUser } = require("../db");
+
+
 
 usersRouter.use((req, res, next) => {
   console.log("A request is being made to /users");
@@ -31,6 +34,7 @@ usersRouter.post('/login', async (req, res, next) => {
 
   try {
     const user = await getUserByUsername(username);
+    user['token'] = jwt.sign({id:user.id,username:user.username},JWT_SECRET)
 
     if (user && user.password == password) {
      
@@ -75,11 +79,13 @@ usersRouter.post('/register', async (req, res, next) => {
     });
 
     res.send({ 
-      message: "thank you for signing up",
+      message: "Thank you for registering",
       token 
     });
   } catch ({ name, message }) {
     next({ name, message })
   } 
 });
+
+
 module.exports = usersRouter;

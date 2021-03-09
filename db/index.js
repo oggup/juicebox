@@ -87,12 +87,14 @@ async function createPost({ authorId, title, content, tags = [] }) {
     } = await client.query(
       `
       INSERT INTO posts("authorId", title, content) 
-      VALUES ($1, $2, $3)
+      VALUES($1, $2, $3)
       RETURNING *;
     `,
       [authorId, title, content]
     );
+
     const tagList = await createTags(tags);
+
     return await addTagsToPost(post.id, tagList);
   } catch (error) {
     throw error;
@@ -351,7 +353,6 @@ async function getUserByUsername(username) {
     throw error;
   }
 }
-
 
 module.exports = {
   client,
